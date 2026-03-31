@@ -1,0 +1,288 @@
+\documentclass{article}
+
+% if you need to pass options to natbib, use, e.g.:
+%     \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading aaj2026
+
+
+% ready for submission
+\usepackage[final]{aaj2026}
+\bibliographystyle{plainnat}
+\usepackage[numbers]{natbib}
+\usepackage[style=authoryear]{biblatex}
+\addbibresource{paper.bib} % Must include .bib extension
+
+
+
+% to compile a preprint version, e.g., for submission to arXiv, add add the
+% [preprint] option:
+%     \usepackage[preprint]{aaj2026}
+
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+%     \usepackage[final]{aaj2026}
+
+
+% to avoid loading the natbib package, add option nonatbib:
+%    \usepackage[nonatbib]{aaj2026}
+
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % colors
+
+
+\title{Generating Spanning Trees}
+
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to break the
+% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
+% authors names on the first line, and the last on the second line, try using
+% \AND instead of \And before the third author name.
+
+
+\author{%
+  Behrouz Barati B\thanks{Use footnote for providing further information
+    about author (webpage, alternative address)---\emph{not} for acknowledging
+    funding agencies.} \\
+  Department of Math\\
+  California State University Northridge\\
+  Northridge, CA 91330 \\
+  \texttt{b3h@me.com} \\
+  % examples of more authors
+\And
+ Zachary Frappier\\
+  Department of Computer Science\\
+  California State University Northridge\\
+  Northridge, CA 91330 \\
+  \texttt{zachary.frappier.132@my.csun.edu} \\
+  \And
+ Richard Phan\\
+  Department of Computer Science\\
+  California State University Northridge\\
+  Northridge, CA 91330 \\
+  \texttt{zachary.frappier.132@my.csun.edu} \\
+  \And
+ Marcus Shaw\\
+  Department of Computer Science\\
+  California State University Northridge\\
+  Northridge, CA 91330 \\
+  \texttt{zachary.frappier.132@my.csun.edu} \\
+  % \AND
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+}
+
+
+\begin{document}
+
+
+\maketitle
+
+
+\begin{abstract}
+  A spanning tree is a subset of graph a graph that connects all vertices without any cycles, the paper we are reviewing uses gray pivot codes, which is a list of all spanning trees that differ by one edge. not only do they improve the runtime from previous algorithms used to generate spanning trees, they also broaden the application of the algorithm to accept not just complete trees, but general as well. 
+\end{abstract}
+
+
+\section{Introduction and Problem Statement}
+
+intro go here
+
+\subsection{Description of Input}
+
+
+graphs? any general graph.
+
+\subsection{Desired Output}
+
+a list of spanning trees. 
+
+\paragraph{definition 1}
+if we want we can use this font for definitions related to our subject.
+
+\paragraph{Grey Codes}
+a listing of all possible spanning trees of a graph such that each consecutive tree in the list differs by a minimal change operation such as edge exchange or pivot.
+
+\paragraph{Amortized Time}
+a method in cs used to analyze the average time taken per operation over a long sequence of operations.
+
+\section{Related Works}
+\label{gen_inst}
+this part we gotta introduce our reference with a one sentence description of its application to our work, i gotta figure out how to link main.tex to paper.bib
+
+\begin{enumerate}
+    \item Nobari, et al.’s longitudinal observational study tracked 20 professional male soccer players for 20 weeks.  found that internal and external load variables are sensitive to factors such as time of season, player positions. TM was measured as mean weekly load / standard deviation of weekly load. TS was measured by weekly load x TM . They used repeated-measures ANOVA and Pearson correlations (\cite{example}).
+\end{enumerate}
+
+
+\section{Motivation}
+\label{headings}
+these are just from the requirements from our assignment
+
+\subsection{Dynamic autoscaling}
+
+
+Second-level headings should be in 10-point type.
+
+
+\subsubsection{Scheduled autoscaling}
+
+
+Third-level headings should be in 10-point type.
+
+
+\subsection{Predictive Autoscaling}
+
+\subsection{components of delay}
+
+\paragraph{Detection Lag}
+Autoscalers typically rely on metrics like CPU or memory utilization, which are aggregated over time (often 1–5 minutes) to prevent rapid, unstable oscillation. Therefore, by the time the system recognizes a need to scale, the surge in demand has already occurred.(\cite{Delay})
+
+\paragraph{Decision Delay}
+After the threshold is breached, the controller takes time to analyze data and determine how many new instances are required.(\cite{Delay})
+
+\paragraph{Provision/Warmup Delay}
+ The longest part of the delay is the time it takes to actually launch new servers, boot operating systems, deploy application code, and make them ready to receive traffic.(\cite{Delay})
+ 
+\section{Case Study: Name of case study}
+\label{others}
+
+What the study is about
+
+\subsectionabout {About the study}
+
+this study was ...
+
+
+\subsection{Footnotes}
+
+
+Footnotes should be used sparingly.  If you do require a footnote, indicate
+footnotes with a number\footnote{Sample of the first footnote.} in the
+text. Place the footnotes at the bottom of the page on which they appear.
+Precede the footnote with a horizontal rule of 2~inches (12~picas).
+
+\subsection{Figures}
+
+
+\begin{figure}
+  \centering
+  \fbox{\rule[-.5cm]{0cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
+  \caption{Sample figure caption.}
+\end{figure}
+
+
+\subsection{Tables}
+
+
+All tables must be centered, neat, clean and legible.  The table number and
+title always appear before the table.  See Table~\ref{sample-table}.
+
+\subsection{Math}
+Note that display math in bare TeX commands will not create correct line numbers for submission. Please use LaTeX (or AMSTeX) commands for unnumbered display math. (You really shouldn't be using \$\$ anyway; see \url{https://tex.stackexchange.com/questions/503/why-is-preferable-to} and \url{https://tex.stackexchange.com/questions/40492/what-are-the-differences-between-align-equation-and-displaymath} for more information.)
+
+\subsection{Final instructions}
+
+Do not change any aspects of the formatting parameters in the style files.  In
+particular, do not modify the width or length of the rectangle the text should
+fit into, and do not change font sizes (except perhaps in the
+\textbf{References} section; see below). Please note that pages should be
+numbered.
+
+
+\section{Discussion}
+
+
+discuss the study?
+
+
+\begin{itemize}
+
+
+\item just kept this here to see what bullet points look like
+
+
+\item item 2
+
+
+\item item 3
+
+
+\item item 4
+can use  verbatim for explicit text
+\begin{verbatim}
+   \newcommand{\RR}{I\!\!R} %real numbers
+   \newcommand{\Nat}{I\!\!N} %natural numbers
+   \newcommand{\CC}{I\!\!\!\!C} %complex numbers
+\end{verbatim}
+Note that \verb+amsfonts+ is automatically loaded by the \verb+amssymb+ package.
+
+
+\end{itemize}
+
+\section{Mitigation Strategy}
+
+\section{Conclusion}
+
+\begin{ack}
+Use unnumbered first level headings for the acknowledgments. All acknowledgments
+go at the end of the paper before the list of references. Moreover, you are required to declare
+funding (financial activities supporting the submitted work) and competing interests (related financial activities outside the submitted work).
+More information about this disclosure can be found at: \url{https://aiagentjournal.org}.
+
+
+Do {\bf not} include this section in the anonymized submission, only in the final paper. You can use the \texttt{ack} environment provided in the style file to automatically hide this section in the anonymized submission.
+\end{ack}
+
+\section*{Notes for References}
+
+
+References follow the acknowledgments in the camera-ready paper. Use unnumbered first-level heading for
+the references. Any choice of citation style is acceptable as long as you are
+consistent. It is permissible to reduce the font size to \verb+small+ (9 point)
+when listing the references.
+Note that the Reference section does not count towards the page limit.
+\medskip
+
+
+\bibliography{biblio.bib}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\appendix
+
+\section{Appendix / supplemental material}
+
+
+Optionally include supplemental material (complete proofs, additional experiments and plots) in appendix.
+All such materials \textbf{SHOULD be included in the main submission.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\end{document}
