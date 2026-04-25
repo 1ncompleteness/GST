@@ -38,6 +38,7 @@
 \usepackage{graphicx}       % Zacs
 \usepackage{float}          % Zacs
 \usepackage{subcaption}     % Zacs
+\usepackage{tikz}           % Behs
 
 \title{Generating Spanning Trees}
 
@@ -308,26 +309,128 @@ arbitrary connected graphs \cite{liu2026}.
 \section{One Algorithm}
 \label{others}
 
-Elaborate on one particular algorithm of your choice in more detail.This algorithm does not have to be the current best, it could a previous well-known algorithm or a preliminary/simplified version of recent algorithms. NP-hard problems may admit only approximation algorithms. Do not attempt to explain advanced data structures or mathematical models that go beyond the scope of this project
+We elaborate on \textsc{GenS} (Algorithm 2.1 of Liu et al.~\cite{liu2026}), the procedure that generates a pivot Gray code listing of all $n^{n-2}$ spanning trees of the complete graph $K_n$. \textsc{GenS} is the headline result of the paper because it resolves Knuth's open problem from \textit{The Art of Computer Programming, Volume~4} (Exercise~101, Section~7.2.1.6), rated $46$ out of $50$ in difficulty. We pick \textsc{GenS} rather than its general-graph cousin \textsc{GenG} (Algorithm 3.2) because complete graphs admit a uniform encoding ($k$-ary strings instead of mixed-radix strings, a single connected component, and a one-dimensional recursion), which makes the main ideas easier to follow without sacrificing the central insight.
 
-\subsection{About the Algorithm }
+\subsection{About the Algorithm}
 
- Explain the main strategy of the algorithm in plain words.
+\paragraph{Encoding a spanning tree as a tuple.}
+Every spanning tree of $K_n$ is rooted at vertex $1$. Once the root is fixed, organize the remaining vertices by their depth in this rooted tree, calling the depth the \emph{level} (root at level~$0$, its children at level~$1$, and so on). The whole spanning tree is then described by the tuple
+\[
+T = (t_1, t_2, \ldots, t_h),
+\]
+where $h$ is the height of the rooted tree and the $\ell$-th entry $t_\ell$ encodes which vertices land at level $\ell$ and who their parents at level $\ell-1$ are. Concretely, suppose levels $0$ through $\ell-1$ already contain $q_{\ell-1}$ vertices, with $p$ of them at level $\ell-1$. Then
+\[
+t_\ell = a_1 a_2 \cdots a_{n-q_{\ell-1}}
+\]
+is a string of length $n-q_{\ell-1}$ over the alphabet $\{0,1,\ldots,p\}$, called a $(p+1)$-ary string. The character $a_i$ describes the $i$-th smallest unplaced vertex: $a_i=0$ means that the vertex is not at level~$\ell$ at all, while $a_i=j>0$ means it is at level~$\ell$ and its parent is the $j$-th smallest vertex at level $\ell-1$. As an example from~\cite{liu2026}, the tuple $T=(00100,1100,22)$ encodes a particular spanning tree of $K_6$. The big idea of \textsc{GenS} is the following:
+\begin{quote}
+\emph{Listing all spanning trees of $K_n$ becomes the same task as listing all valid tuples~$T$.}
+\end{quote}
 
-\subsection{pseudo code or code snippets}
+\paragraph{The recursive idea.}
+\textsc{GenS} starts from the path spanning tree $1{-}2{-}\cdots{-}n$, whose tuple is $T=(10^{n-2}, 10^{n-3}, \ldots, 1)$. It then recurses level by level. At level~$\ell$, with the subtree on levels $0$ through $\ell-1$ frozen, the algorithm sweeps through every legal value of $t_\ell$ in Gray code order using the helper \textsc{GenK} (Algorithm~2.2). For each value of $t_\ell$ produced, \textsc{GenS} recurses into level~$\ell+1$ to enumerate all spanning trees that share that prefix. When level~$\ell$'s string list is exhausted, control backtracks to level~$\ell-1$, which advances its own string and triggers a fresh sweep of the deeper levels.
 
-we have code snippets for alg 2.1, 2.2, 3.1, 3.2, 3.3
+\paragraph{Why this is a pivot Gray code.}
+\textsc{GenK} produces a $1$-Gray code over $k$-ary strings: consecutive strings differ either by a single-symbol change or, in one special situation, by swapping a $0$ with a non-zero character. By Lemma~2.2 of~\cite{liu2026}, every such string change corresponds to exactly one of four edge edits on the spanning tree (illustrated in Figure~2.3 of the paper):
+\begin{itemize}
+    \item \textbf{Case (a)} $a_v\colon 0\to r>0$. A vertex $v$ at some level $q>\ell$ disconnects from its parent $w$ and reconnects to a new parent $u$ at level $\ell-1$. Removed edge $(v,w)$ and added edge $(v,u)$ both touch~$v$.
+    \item \textbf{Case (b)} $a_v\colon r>0\to 0$. A vertex $v$ at level $\ell$ disconnects from its parent $u$ at level $\ell-1$ and re-attaches as a child of some other vertex $w$ at level $q\geq\ell$. Both edges touch~$v$.
+    \item \textbf{Case (c)} $a_v\colon r\to j$ with $r,j>0$ and $r\neq j$. A vertex $v$ at level $\ell$ swaps its parent from $u$ to a different vertex $w$, both at level $\ell-1$. Both edges touch~$v$.
+    \item \textbf{Case (d)} The $0$/non-zero swap. A vertex $u$ at level $\ell-1$ disconnects from its child $v$ at level $\ell$ and reconnects to a vertex $w\neq v$ at level $q>\ell$ (with $w$ a descendant of $v$, so the tree stays connected). Both edges touch~$u$.
+\end{itemize}
+In every case, the removed edge and the added edge share a common vertex, so consecutive trees differ by a \emph{pivot} edge exchange. This is the property that resolves Knuth's open problem.
 
-\subsection{analyze runtime}
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+    vertex/.style={circle, draw, fill=black, inner sep=1.2pt, minimum size=2pt},
+    arr/.style={->, thick}
+  ]
+    % Tree 1: path 1-2-3-4
+    \begin{scope}[shift={(0,0)}]
+      \node[vertex, label=left:{\footnotesize $1$}] (a1) at (0, 1.5) {};
+      \node[vertex, label=left:{\footnotesize $2$}] (a2) at (0, 1.0) {};
+      \node[vertex, label=left:{\footnotesize $3$}] (a3) at (0, 0.5) {};
+      \node[vertex, label=left:{\footnotesize $4$}] (a4) at (0, 0.0) {};
+      \draw (a1) -- (a2) -- (a3) -- (a4);
+      \node[font=\footnotesize, align=center] at (0, -0.7) {Tree 1\\$T{=}(100,10,1)$};
+    \end{scope}
 
-run time is O(n2).
+    \draw[arr] (1.2, 0.75) -- (3.2, 0.75);
+    \node[font=\footnotesize, align=center] at (2.2, 1.05) {case (a)};
+    \node[font=\footnotesize, align=center] at (2.2, 0.45) {$b_2{:}\, 0 \to 1$};
+
+    % Tree 2: star, 1-2, 2-3, 2-4
+    \begin{scope}[shift={(4.4,0)}]
+      \node[vertex, label=above:{\footnotesize $1$}] (b1) at (0, 1.5) {};
+      \node[vertex, label=left:{\footnotesize $2$}] (b2) at (0, 1.0) {};
+      \node[vertex, label=below:{\footnotesize $3$}] (b3) at (-0.5, 0.5) {};
+      \node[vertex, label=below:{\footnotesize $4$}] (b4) at (0.5, 0.5) {};
+      \draw (b1) -- (b2);
+      \draw (b2) -- (b3);
+      \draw (b2) -- (b4);
+      \node[font=\footnotesize, align=center] at (0, -0.7) {Tree 2\\$T{=}(100,11)$};
+    \end{scope}
+
+    \draw[arr] (5.6, 0.75) -- (7.6, 0.75);
+    \node[font=\footnotesize, align=center] at (6.6, 1.05) {case (b)};
+    \node[font=\footnotesize, align=center] at (6.6, 0.45) {$b_1{:}\, 1 \to 0$};
+
+    % Tree 3: 1-2, 2-4, 4-3
+    \begin{scope}[shift={(8.8,0)}]
+      \node[vertex, label=left:{\footnotesize $1$}] (c1) at (0, 1.5) {};
+      \node[vertex, label=left:{\footnotesize $2$}] (c2) at (0, 1.0) {};
+      \node[vertex, label=left:{\footnotesize $4$}] (c4) at (0, 0.5) {};
+      \node[vertex, label=left:{\footnotesize $3$}] (c3) at (0, 0.0) {};
+      \draw (c1) -- (c2) -- (c4) -- (c3);
+      \node[font=\footnotesize, align=center] at (0, -0.7) {Tree 3\\$T{=}(100,01,1)$};
+    \end{scope}
+  \end{tikzpicture}
+  \caption{Three consecutive spanning trees of $K_4$ produced by \textsc{GenS}, drawn as rooted trees with vertex~$1$ at the top. The transition Tree~$1 \to$ Tree~$2$ changes a single zero of $t_2$ to a one, which is case (a) of Lemma~2.2, and pivots around vertex~$4$ (edge $(4,3)$ is removed, edge $(4,2)$ is added). The transition Tree~$2 \to$ Tree~$3$ changes a single one of $t_2$ to a zero, which is case (b), and pivots around vertex~$3$ (edge $(3,2)$ is removed, edge $(3,4)$ is added). In each step exactly one edge is removed, one edge is added, and the two edges share a common vertex, satisfying the pivot Gray code property.}
+  \label{fig:gens-iteration}
+\end{figure}
+
+\vspace{-20pt}
+\subsection{Pseudo Code}
+
+The pseudocode of \textsc{GenS} is reproduced as Figure~\ref{fig:complete_algorithms}(a) (\texttt{GenS.png}). We annotate its lines below. The procedure receives a vertex set $V$ (the vertices not yet placed on levels $0$ through $\ell-2$) and the previous level's string $t_{\ell-1}$.
+\begin{enumerate}
+    \item \emph{Lines 2--3.} Split $V$ into $P$ (the vertices placed at level $\ell-1$, those with $a_i>0$ in $t_{\ell-1}$) and $C$ (the vertices still unassigned, those with $a_i=0$).
+    \item \emph{Lines 4--6.} If $C$ is empty, the rooted tree is complete: print the spanning tree and return.
+    \item \emph{Lines 7--9.} Initialize $t_\ell$ to all zeros, then mark in it any parent already chosen by the current spanning tree.
+    \item \emph{Line 10.} Recurse: \textsc{GenS}$(C, t_\ell)$ enumerates all spanning trees with the current $t_\ell$ frozen.
+    \item \emph{Lines 11--19.} Repeatedly call \textsc{NextK}$(t_\ell, |P|+1)$ to advance $t_\ell$ in $k$-ary Gray code order with $k=|P|+1$. The returned change set $\delta$ identifies which positions of $t_\ell$ moved, and the algorithm dispatches on its size:
+    \begin{itemize}
+        \item $|\delta|>1$: a $0$/non-zero swap, i.e.\ \emph{case (d)}. Reassign the parent pointer and call \textsc{Lift} to push the affected vertex up to level~$\ell$.
+        \item $|\delta|=1$ and the new value $b_{\delta_0}>0$: \emph{cases (a) or (c)}. Set the parent of $c_{\delta_0}$ to the corresponding vertex in~$P$.
+        \item $|\delta|=1$ and the new value is $0$: \emph{case (b)}. Re-route the parent of the affected vertex to a sibling already placed at level~$\ell$.
+    \end{itemize}
+    After each update, recurse into \textsc{GenS}$(C, t_\ell)$ again.
+\end{enumerate}
+The four edit cases of Lemma~2.2 thus correspond to the three branches of the dispatch in lines 13--19. The combined pseudocode of \textsc{GenS} and \textsc{GenK} fits comfortably within the one-page pseudocode budget specified for the report.
+
+\subsection{Running Time}
+
+\textsc{GenS} generates each spanning tree of $K_n$ in \emph{constant amortized time} using $O(n^2)$ space. The bound is established in Theorem~2.6 of~\cite{liu2026}.
+
+\paragraph{Why \textsc{GenK} is constant amortized.}
+\textsc{GenK} produces a $1$-Gray code over $k$-ary strings using the reflectable-language framework of Li and Sawada (cited as~[21] in~\cite{liu2026}). Its \textsc{NextK} subroutine produces the next $k$-ary string in the listing in constant amortized time by tracking only the position that changed since the previous call, so the per-string cost averages to $O(1)$.
+
+\paragraph{Why \textsc{GenS} inherits the same bound.}
+At each level $\ell$, the work performed before the while loop (lines 2--10) is $O(t)$ where $t = |t_{\ell-1}|$: we scan $V$ to build $P$ and $C$, and we copy known parent assignments into $t_\ell$. The while loop, in the worst case ($|C|=1$), produces $t-1$ different configurations of $t_\ell$, and in general, the number of configurations grows as the level descends. Therefore, the $O(t)$ setup cost is amortized over $\Omega(t)$ generated trees, giving a constant amortized cost per tree.
+
+The \textsc{Lift} operation triggered on case (d) costs $O(t)$ in the worst case, but case (d) is invoked only once per stretch of $2^t$ updates of cases (a), (b), and (c), so its amortized cost is also constant. The remaining operations inside the while loop, namely updating a single parent pointer, looking up a vertex by index, and advancing $t_\ell$ via \textsc{NextK}, each take $O(1)$ when supported by the auxiliary hash tables described in Appendix~A of~\cite{liu2026}.
+
+\paragraph{Space.}
+\textsc{GenK}'s direction array $d$ stores $|t_\ell|$ entries at each of the $O(n)$ levels of recursion, contributing $O(n^2)$. The hash tables for the parent map $\pi$ and the sibling chain, together with the recursive stack for $T$, $P$, and $C$, also fit in $O(n^2)$. Hence, the total space is $O(n^2)$, matching Smith's earlier algorithm but achieving the strictly stronger pivot Gray code property.
+
 
 
 \section{Implementation}
 
 \subsection{Source and Setup}
 
-The code implementation used in this project was provided from the research paper in python, although the indentation of the code was not visible and needed to be fixed. The research paper provided 3 code snippets in python. The first being code to generate pivot Gray codes for spanning trees of complete graphs. The second is to generate an edge-exchange Gray code for spanning trees of a general graph. The third is \texttt{k\_ary} that generates Gray codes for $k$-ary strings and mixed-radix strings. The other two programs utilize \texttt{k\_ary} to enumerate all spanning trees of the user-defined graph and print them out as a parent-pointer list \cite{liu2026}.
+The code implementation used in this project was provided from the research paper in Python, although the indentation of the code was not visible and needed to be fixed. The research paper provided 3 code snippets in Python. The first being code to generate pivot Gray codes for spanning trees of complete graphs. The second is to generate an edge-exchange Gray code for spanning trees of a general graph. The third is \texttt{k\_ary} that generates Gray codes for $k$-ary strings and mixed-radix strings. The other two programs utilize \texttt{k\_ary} to enumerate all spanning trees of the user-defined graph and print them out as a parent-pointer list \cite{liu2026}.
 
 The program prompts the user to choose between five different graph types: complete graphs, fan graphs, wheel graphs, the Petersen graph, and custom graphs given by an edge list. The fan, wheel, and Petersen graphs are just different types of general graphs. For complete, fan, and wheel graphs, the user is prompted for the number of vertices within the graph. After input, the graph is constructed as an adjacency matrix, the program builds an initial spanning tree using breadth-first search, and then begins enumeration. Each spanning tree is outputted in the form of \texttt{1->-1; 2->1, 3->2; ...}, where every entry gives a vertex and the index of its parent, -1 representing the root \cite{liu2026}.
 
@@ -358,10 +461,9 @@ The following notes are intended for readers who wish to run or build on this im
 This report examined the work of Liu, Wong, Lam, and Im, which resolves a decades-long open problem by presenting the first known pivot Gray code for spanning trees of complete graphs. Their algorithm, GenS, encodes spanning trees as tuples of digit strings and guarantees the pivot property through four proven transition cases, achieving constant amortized time per tree using O(n²) space. Testing confirmed that the implementation produces correct tree counts matching Cayley's formula and valid pivot transitions throughout. The framework further generalizes to edge-exchange Gray codes for arbitrary connected graphs, extending the practical reach of the approach across applications in network design, epidemiology, and circuit analysis.
 
 
-\section{References \#FIXME:DELETE LATER}
+%section{References \#FIXME:DELETE LATER}
 
-
-Cite all resources used for preparing the project report (including books, papers, urls, and Artificial Intelligence). Add reference for every claim that is not substantiated within the project report. Add references and pointers to related topics that you find interesting but go beyond the scope of the project. Text or code taken from any source must be clearly indicated with quotation marks, with a clear reference to the source.
+%Cite all resources used for preparing the project report (including books, papers, URLs, and Artificial Intelligence). Add a reference for every claim that is not substantiated within the project report. Add references and pointers to related topics that you find interesting but go beyond the scope of the project. Text or code taken from any source must be clearly indicated with quotation marks, with a clear reference to the source.
 \newpage
 \bibliography{paper}
 
@@ -373,7 +475,7 @@ Cite all resources used for preparing the project report (including books, paper
 \section{Credits}
 
 
-All members participated in team meetings, research, and presentation preparation. Individual writing contributions are as follows: Zachary wrote sections 1 and 2 which include the Problem and Motivation section, including the formal problem definition, Knuth's open problem background, and real-world applications of spanning tree enumeration. Richard wrote the History section, covering the development of spanning tree enumeration from early algorithms through Gray codes, the revolving-door problem, the progression to pivot Gray codes leading to this paper's contribution and compiled all references and credits. Behrouz wrote the One Algorithm section, providing a detailed explanation of the GenS algorithm including the tuple encoding, the four pivot-change cases from Lemma 2.2, pseudocode walkthrough, and running time analysis. Marcus wrote the Implementation section, including testing of the provided Python code, verification of tree counts against Cayley's formula, reader recommendations for using the code.
+All members participated in team meetings, research, and presentation preparation. Individual writing contributions are as follows: Zachary wrote sections 1 and 2, which include the Problem and Motivation section, including the formal problem definition, Knuth's open problem background, and real-world applications of spanning tree enumeration. Richard wrote the History section, covering the development of spanning tree enumeration from early algorithms through Gray codes, the revolving-door problem, the progression to pivot Gray codes, leading to this paper's contribution, and compiled all references and credits. Behrouz wrote the One Algorithm section, providing a detailed explanation of the GenG algorithm, including the tuple encoding, the four pivot-change cases from Lemma 2.2, a pseudocode walkthrough, and a running-time analysis. Marcus wrote the Implementation section, including testing the provided Python code, verifying tree counts against Cayley's formula, and offering reader recommendations for using the code.
 
 
 \end{document}
