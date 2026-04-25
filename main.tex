@@ -103,7 +103,7 @@
 \maketitle
 
 \section*{Generative AI Declaration}
-This project used Claude (Anthropic) as an AI assistant during the preparation of this report. Claude was used to help understand and explain concepts from the primary research paper, to provide feedback on draft writing, to assist with polishing and editing written sections for clarity and tone, and as a programming assistant for verifying code behavior. All intellectual content, analysis, and final writing decisions were made by the authors. Claude was not used to generate citations or fabricate sources.
+This project used Claude (Anthropic) and ChatGPT(openAI) as an AI assistant during the preparation of this report. Claude was used to help understand and explain concepts from the primary research paper, to provide feedback on draft writing, to assist with polishing and editing written sections for clarity and tone, and as a programming assistant for verifying code behavior. All intellectual content, analysis, and final writing decisions were made by the authors. Claude was not used to generate citations or fabricate sources.
 
 \begin{abstract}
 A spanning tree of a graph is a connected, acyclic subgraph that includes all vertices. 
@@ -390,24 +390,66 @@ In every case, the removed edge and the added edge share a common vertex, so con
   \label{fig:gens-iteration}
 \end{figure}
 
-\vspace{-20pt}
 \subsection{Pseudo Code}
 
-The pseudocode of \textsc{GenS} is reproduced as Figure~\ref{fig:complete_algorithms}(a) (\texttt{GenS.png}). We annotate its lines below. The procedure receives a vertex set $V$ (the vertices not yet placed on levels $0$ through $\ell-2$) and the previous level's string $t_{\ell-1}$.
-\begin{enumerate}
-    \item \emph{Lines 2--3.} Split $V$ into $P$ (the vertices placed at level $\ell-1$, those with $a_i>0$ in $t_{\ell-1}$) and $C$ (the vertices still unassigned, those with $a_i=0$).
-    \item \emph{Lines 4--6.} If $C$ is empty, the rooted tree is complete: print the spanning tree and return.
-    \item \emph{Lines 7--9.} Initialize $t_\ell$ to all zeros, then mark in it any parent already chosen by the current spanning tree.
-    \item \emph{Line 10.} Recurse: \textsc{GenS}$(C, t_\ell)$ enumerates all spanning trees with the current $t_\ell$ frozen.
-    \item \emph{Lines 11--19.} Repeatedly call \textsc{NextK}$(t_\ell, |P|+1)$ to advance $t_\ell$ in $k$-ary Gray code order with $k=|P|+1$. The returned change set $\delta$ identifies which positions of $t_\ell$ moved, and the algorithm dispatches on its size:
-    \begin{itemize}
-        \item $|\delta|>1$: a $0$/non-zero swap, i.e.\ \emph{case (d)}. Reassign the parent pointer and call \textsc{Lift} to push the affected vertex up to level~$\ell$.
-        \item $|\delta|=1$ and the new value $b_{\delta_0}>0$: \emph{cases (a) or (c)}. Set the parent of $c_{\delta_0}$ to the corresponding vertex in~$P$.
-        \item $|\delta|=1$ and the new value is $0$: \emph{case (b)}. Re-route the parent of the affected vertex to a sibling already placed at level~$\ell$.
-    \end{itemize}
-    After each update, recurse into \textsc{GenS}$(C, t_\ell)$ again.
-\end{enumerate}
-The four edit cases of Lemma~2.2 thus correspond to the three branches of the dispatch in lines 13--19. The combined pseudocode of \textsc{GenS} and \textsc{GenK} fits comfortably within the one-page pseudocode budget specified for the report.
+The pseudocode of \textsc{GenS} is reproduced on the left of Figure~\ref{fig:gens-pseudocode}, with line-by-line annotations on the right. The procedure receives a vertex set $V$ (the vertices not yet placed on levels $0$ through $\ell-2$) and the previous level's string $t_{\ell-1}$.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.32\linewidth}
+        \vspace{0pt}
+        \scriptsize
+        \rule{\linewidth}{0.4pt}\\[-2pt]
+        \textbf{Algorithm 2.1}\, Generating pivot Gray codes for spanning trees of complete graphs\\[-4pt]
+        \rule{\linewidth}{0.4pt}
+        \begin{tabular}{@{}r@{\hspace{0.4em}}l@{}}
+            1: & \textbf{procedure} \textsc{GenS}$(V, t_{\ell-1} = a_1 a_2 \cdots a_{|V|})$ \\
+            2: & \hspace{0.8em} $P \gets v_i \in V$ where $a_i > 0$ \\
+            3: & \hspace{0.8em} $C \gets v_i \in V$ where $a_i = 0$ \\
+            4: & \hspace{0.8em} \textbf{if} $|C| = 0$ \textbf{then} \\
+            5: & \hspace{1.6em} Print spanning tree \\
+            6: & \hspace{1.6em} \textbf{return} \\
+            7: & \hspace{0.8em} $t_\ell = b_1 b_2 \cdots b_{|C|} \gets 0^{|C|}$ \\
+            8: & \hspace{0.8em} \textbf{for} $c_i \in C$ \textbf{do} \\
+            9: & \hspace{1.6em} \textbf{if} $\pi(c_i) \in P$ \textbf{then} \\
+            10: & \hspace{2.4em} $b_i \gets j$ where $\pi(c_i) = p_j \in P$ \\
+            11: & \hspace{0.8em} \textsc{GenS}$(C, t_\ell)$ \\
+            12: & \hspace{0.8em} \textbf{while} \textsc{NextK}$(t_\ell, |P| + 1) \neq \emptyset$ \textbf{do} \\
+            13: & \hspace{1.6em} $t_\ell, \delta \gets$ \textsc{NextK}$(t_\ell, |P| + 1)$ \\
+            14: & \hspace{1.6em} \textbf{if} $|\delta| > 1$ \textbf{then} \\
+            15: & \hspace{2.4em} $\pi(c_{\delta_1}) \gets \pi(c_{\delta_0})$ \quad {\color{blue}$\triangleright$ case (d)} \\
+            16: & \hspace{2.4em} \textsc{Lift}$(c_{\delta_1})$ \\
+            17: & \hspace{1.6em} \textbf{else if} $b_{\delta_0} > 0$ \textbf{then} \\
+            18: & \hspace{2.4em} $\pi(c_{\delta_0}) \gets p_{b_{\delta_0}} \in P$ \quad {\color{blue}$\triangleright$ cases (a) and (c)} \\
+            19: & \hspace{1.6em} \textbf{else} \\
+            20: & \hspace{2.4em} $\pi(c_{\delta_0}) \gets c_j \in C$ where $b_j > 0$ \quad {\color{blue}$\triangleright$ case (b)} \\
+            21: & \hspace{1.6em} \textsc{GenS}$(C, t_\ell)$ \\
+        \end{tabular}\\[-2pt]
+        \rule{\linewidth}{0.4pt}
+    \end{minipage}%
+    \hspace{0.1em}%
+    \begin{minipage}[t]{0.66\linewidth}
+        \vspace{0pt}
+        \footnotesize
+        \begin{enumerate}
+            \item \emph{Lines 2--3.} Split $V$ into $P$ (the vertices placed at level $\ell-1$, those with $a_i>0$ in $t_{\ell-1}$) and $C$ (the vertices still unassigned, those with $a_i=0$).
+            \item \emph{Lines 4--6.} If $C$ is empty, the rooted tree is complete: print the spanning tree and return.
+            \item \emph{Lines 7--10.} Initialize $t_\ell$ to all zeros, then mark in it any parent already chosen by the current spanning tree.
+            \item \emph{Line 11.} Recurse: \textsc{GenS}$(C, t_\ell)$ enumerates all spanning trees with the current $t_\ell$ frozen.
+            \item \emph{Lines 12--20.} Repeatedly call \textsc{NextK}$(t_\ell, |P|+1)$ to advance $t_\ell$ in $k$-ary Gray code order with $k=|P|+1$. The change set $\delta$ identifies which positions of $t_\ell$ moved, and the algorithm dispatches on its size:
+            \begin{itemize}
+                \item $|\delta|>1$: a $0$/non-zero swap, \emph{case (d)}. Reassign the parent pointer and call \textsc{Lift}.
+                \item $|\delta|=1$ and $b_{\delta_0}>0$: \emph{cases (a) or (c)}. Set the parent of $c_{\delta_0}$ to the corresponding vertex in~$P$.
+                \item $|\delta|=1$ and the new value is $0$: \emph{case (b)}. Re-route the parent to a sibling already placed at level~$\ell$.
+            \end{itemize}
+            After each update, recurse into \textsc{GenS}$(C, t_\ell)$ again.
+        \end{enumerate}
+    \end{minipage}
+    \caption{Pseudocode of \textsc{GenS} (Algorithm 2.1 of~\cite{liu2026}) reproduced, with line-by-line annotations.}
+    \label{fig:gens-pseudocode}
+\end{figure}
+
+The four edit cases of Lemma~2.2 thus correspond to the three branches of the dispatch in lines 14--20. The pseudocode of \textsc{GenS} fits comfortably within the one-page pseudocode budget specified for the report.
 
 \subsection{Running Time}
 
@@ -464,18 +506,18 @@ This report examined the work of Liu, Wong, Lam, and Im, which resolves a decade
 %section{References \#FIXME:DELETE LATER}
 
 %Cite all resources used for preparing the project report (including books, papers, URLs, and Artificial Intelligence). Add a reference for every claim that is not substantiated within the project report. Add references and pointers to related topics that you find interesting but go beyond the scope of the project. Text or code taken from any source must be clearly indicated with quotation marks, with a clear reference to the source.
-\newpage
+%\newpage
 \bibliography{paper}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
+%\newpage
 \appendix
 
 \section{Credits}
 
 
-All members participated in team meetings, research, and presentation preparation. Individual writing contributions are as follows: Zachary wrote sections 1 and 2, which include the Problem and Motivation section, including the formal problem definition, Knuth's open problem background, and real-world applications of spanning tree enumeration. Richard wrote the History section, covering the development of spanning tree enumeration from early algorithms through Gray codes, the revolving-door problem, the progression to pivot Gray codes, leading to this paper's contribution, and compiled all references and credits. Behrouz wrote the One Algorithm section, providing a detailed explanation of the GenG algorithm, including the tuple encoding, the four pivot-change cases from Lemma 2.2, a pseudocode walkthrough, and a running-time analysis. Marcus wrote the Implementation section, including testing the provided Python code, verifying tree counts against Cayley's formula, and offering reader recommendations for using the code.
+All members participated in team meetings, research, and presentation preparation. Individual writing contributions are as follows: Zachary wrote sections 1 and 2, which include the Problem and Motivation section, including the formal problem definition, Knuth's open problem background, and real-world applications of spanning tree enumeration. Richard wrote the History section, covering the development of spanning tree enumeration from early algorithms through Gray codes, the revolving-door problem, the progression to pivot Gray codes, leading to this paper's contribution, and compiled all references and credits. Behrouz wrote the One Algorithm section, providing a detailed explanation of the GenS algorithm, including the tuple encoding, the four pivot-change cases from Lemma 2.2, a pseudocode walkthrough, and a running-time analysis. Marcus wrote the Implementation section, including testing the provided Python code, verifying tree counts against Cayley's formula, and offering reader recommendations for using the code.
 
 
 \end{document}
