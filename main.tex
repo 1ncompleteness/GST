@@ -58,7 +58,7 @@
   Department of Computer Science\\
   California State University Northridge\\
   Northridge, CA 91330 \\
-  \texttt{b3h@me.com} \\
+  \texttt{behrouz.barati-bagherabad.065@my.csun.edu} \\
   % examples of more authors
 \And
  Zachary Frappier\\
@@ -101,9 +101,21 @@
 
 \maketitle
 
+\section*{Generative AI Declaration}
+This project used Claude (Anthropic) as an AI assistant during the preparation of this report. Claude was used to help understand and explain concepts from the primary research paper, to provide feedback on draft writing, to assist with polishing and editing written sections for clarity and tone, and as a programming assistant for verifying code behavior. All intellectual content, analysis, and final writing decisions were made by the authors. Claude was not used to generate citations or fabricate sources.
 
 \begin{abstract}
-  A spanning tree is a subset of graph a graph that connects all vertices without any cycles, the paper we are reviewing uses gray pivot codes, which is a list of all spanning trees that differ by one edge. not only do they improve the runtime from previous algorithms used to generate spanning trees, they also broaden the application of the algorithm to accept not just complete trees, but general as well. 
+A spanning tree of a graph is a connected, acyclic subgraph that includes all vertices. 
+Enumerating all spanning trees of a graph is a fundamental problem in combinatorics 
+with applications in network analysis, epidemiology, and circuit design. This report 
+reviews the work of Liu, Wong, Lam, and Im (SODA 2026), which presents the first known 
+pivot Gray code for spanning trees of complete graphs. A pivot Gray code is an ordering 
+of all spanning trees such that consecutive trees differ by exactly one edge swap, where 
+the removed and added edges share a common vertex. Their algorithm, GenS, generates all 
+$n^{n-2}$ spanning trees of $K_n$ in pivot Gray code order in constant amortized time 
+per tree using $O(n^2)$ space, resolving an open problem posed by Knuth rated 46 out of 
+50 in difficulty. The framework also extends to edge-exchange Gray codes for general 
+connected graphs.
 \end{abstract}
 
 
@@ -126,7 +138,7 @@ Figures~\ref{fig:complete_algorithms} and \ref{fig:general_algorithms} illustrat
         \caption{GenK (Algorithm 2.2)}
     \end{subfigure}
     
-    \caption{Algorithms for generating pivot Gray codes for spanning trees of complete graphs.}
+    \caption{Algorithms for generating pivot Gray codes for spanning trees of complete graphs(source: \cite{liu2026}).}
     \label{fig:complete_algorithms}
 \end{figure}
 
@@ -151,7 +163,7 @@ Figures~\ref{fig:complete_algorithms} and \ref{fig:general_algorithms} illustrat
         \caption{GenT (Algorithm 3.3)}
     \end{subfigure}
     
-    \caption{Algorithms for generating Gray codes for spanning trees of general graphs.}
+    \caption{Algorithms for generating Gray codes for spanning trees of general graphs(source: \cite{liu2026}).}
     \label{fig:general_algorithms}
 \end{figure}
 
@@ -181,91 +193,117 @@ We introduce several key definitions used throughout this work.
 
 \textbf{Mixed-Radix String.} A mixed-radix string is a sequence where each position may have a different base. This is used in the general graph case to represent valid parent assignments for vertices with differing adjacency constraints.
 
-\section{Related Works}
-\label{gen_inst}
-this part we gotta introduce our reference with a one sentence description of its application to our work, i gotta figure out how to link main.tex to paper.bib
-
-\begin{enumerate}
-    \item Nobari, et al.’s longitudinal observational study tracked 20 professional male soccer players for 20 weeks.  found that internal and external load variables are sensitive to factors such as time of season, player positions. TM was measured as mean weekly load / standard deviation of weekly load. TS was measured by weekly load x TM . They used repeated-measures ANOVA and Pearson correlations (\cite{example}).
-\end{enumerate}
-
 
 \section{Motivation}
 \subsection{Real World Application}
 \label{headings}
 Spanning tree enumeration plays an important role across a wide range of scientific fields where alternative network configurations, robustness, and probabilistic behavior must be analyzed. 
 
-One of the earliest motivations for spanning trees arises from electrical network analysis. In electrical systems, Kirchhoff’s laws enable current and voltage analysis by decomposing a network into spanning trees \cite{kirchhoff1847}. Modern work further connects spanning trees to electrical flow optimization, where networks are analyzed through tree-based decompositions \cite{kelner2013electrical, borradaile2020electrical}. Power distribution systems are often operated as radial,tree-like, structures for stability and fault isolation, and enumerating spanning trees allows engineers to explore multiple configurations for power flow while also enabling optimization of energy efficiency, load balancing, and network reconfiguration.
+One of the earliest motivations for spanning trees arises in 1847 from electrical network analysis. In electrical systems, Kirchhoff’s laws enable current and voltage analysis by decomposing a network into spanning trees \cite{kirchhoff1847}. Modern work further connects spanning trees to electrical flow optimization, where networks are analyzed through tree-based decompositions \cite{kelner2013electrical, borradaile2020electrical}. Power distribution systems are often operated as radial,tree-like, structures for stability and fault isolation, and enumerating spanning trees allows engineers to explore multiple configurations for power flow while also enabling optimization of energy efficiency, load balancing, and network reconfiguration.
 
-In epidemiology, spanning trees provide a natural representation of transmission pathways, where each tree corresponds to a possible “who-infected-whom” structure during an outbreak. Transmission data is often incomplete or uncertain, so using enumerating spanning trees allows researchers to explore all plausible infection scenarios and perform probabilistic modeling of disease spread \cite{scott2021genomic, rahman2025epidemiology}. This enables better understanding of outbreak dynamics and supports evaluation of intervention strategies such as vaccination and contact tracing. In social network analysis, spanning trees are used to extract simplified backbone structures of complex interaction networks, enabling efficient sampling and analysis of connectivity patterns under structural constraints \cite{lee2020social}.
+In epidemiology, spanning trees provide a natural representation of transmission pathways, where each tree corresponds to a possible “who-infected-whom” structure during an outbreak. Transmission data is often incomplete or uncertain, so using enumerating spanning trees allows researchers to explore all plausible infection scenarios and perform probabilistic modeling of disease spread \cite{scott2021genomic, rahman2025epidemiology}. This enables better understanding of outbreak dynamics and supports evaluation of intervention strategies such as vaccination and contact tracing. In social network analysis, spanning trees are used to extract simplified backbone structures of complex interaction networks, enabling efficient sampling and analysis of connectivity patterns under structural constraints \cite{lee2024social}.
 
 Spanning trees also play a key role in chemistry and biology by modeling molecular structures and evolutionary relationships. In phylogenetics, spanning trees represent candidate evolutionary trees, allowing researchers to compare competing hypotheses and quantify uncertainty in biological data \cite{graph_theory_mst_applications}. Spanning trees are used in biological sequence analysis, molecular modeling, and studies of network entropy. In physical and technological systems, spanning trees are closely related to models of diffusion, percolation, and connectivity in complex networks. They are also used in the design and analysis of telecommunication systems and in evaluating network complexity and resilience \cite{nature_complex_networks}.
 
-In image processing and computer vision, spanning trees are applied to graph-based representations of images, where pixels are treated as nodes in a graph. Spanning trees enable image segmentation and clustering, grouping pixels into meaningful regions. Enumeration is particularly important in this setting, as different spanning trees correspond to different segmentations, allowing algorithms to explore multiple interpretations of an image and improve robustness \cite{gfg_spanning_tree}. Finally, in network design and reliability, spanning trees represent minimal connectivity structures in communication networks, power grids, and transportation systems. Enumerating spanning trees enables the evaluation of fault tolerance and reliability, since the number and diversity of spanning trees directly reflect the resilience of a network \cite{utdallas_mst, sciencedirect_spanning_tree}.
+In image processing and computer vision, spanning trees are applied to graph-based representations of images, where pixels are treated as nodes in a graph. Spanning trees enable image segmentation and clustering, grouping pixels into meaningful regions. Enumeration is particularly important in this setting, as different spanning trees correspond to different segmentations, allowing algorithms to explore multiple interpretations of an image and improve robustness \cite{gfg_spanning_tree,mst_image_segmentation}. Finally, in network design and reliability, spanning trees represent minimal connectivity structures in communication networks, power grids, and transportation systems. Enumerating spanning trees enables the evaluation of fault tolerance and reliability, since the number and diversity of spanning trees directly reflect the resilience of a network \cite{ding2024reliability}.
 
 Across these domains, spanning tree enumeration supports three key objectives: reliability analysis, by quantifying alternative connectivity structures; probabilistic modeling, by exploring all feasible configurations; and optimization, by enabling selection among multiple candidate solutions. These applications highlight the practical importance of efficient spanning tree generation algorithms, such as those developed in this work.
 
-\subsection{Problem Background and Historical Context}
+\section{History}
 
-The problem of efficiently enumerating spanning trees has a long history in combinatorics and computer science. For a complete graph $K_n$, Cayley’s formula states that there are $n^{n-2}$ distinct spanning trees, making enumeration exponential in output size. 
+\subsection{Counting Spanning Trees: Cayley's Formula}
 
-The specific problem addressed in our work was posed by Knuth in \textit{The Art of Computer Programming} (Vol. 4A, Section 7.2.1.6, Exercise 101), where he asked whether there exists a \emph{simple revolving-door} method to list all spanning trees of the complete graph $K_n$. In this context, a revolving-door ordering refers to a Gray code, where consecutive spanning trees differ by a small local change, specifically the removal of one edge and the addition of another. Knuth noted that existing approaches, such as Algorithm S, produce such listings but are ``quite complicated'' and lack a clean structure. Knuth’s Algorithm S is hard to understand because it serves more as a starting point to develop an algorithm, providing english version of code for someone else to develop.
+The study of spanning trees began not in pure mathematics but in engineering. In 1902,
+physicist Wilhelm Feussner investigated spanning tree enumeration in the context of
+electrical network analysis, establishing a foundational question that researchers would
+pursue for over a century \cite{liu2026}. The first major theoretical result was
+Cayley's formula (1889): the complete graph $K_n$ has exactly $n^{n-2}$ spanning trees.
+Pr\"{u}fer later formalized this with a bijection between spanning trees and integer
+sequences, and Kirchhoff derived the same count independently through the matrix-tree
+theorem \cite{liu2026}. To put the scale in perspective: $K_4$ has 16 spanning trees,
+$K_5$ has 125, and $K_{10}$ has 100{,}000{,}000. This rapid growth is precisely what
+makes efficient generation algorithms necessary.
 
-%% ADD KNUTHS ALG HERE %%%%
-\begin{figure}[H]
-    \centering
+\subsection{Early Algorithms and Their Limitations}
 
-    % Row 1
-    \begin{subfigure}[b]{0.3\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{knuth_1.png}
-        \caption{}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.3\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{knuth_2.png}
-        \caption{}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.3\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{knuth_3.png}
-        \caption{}
-    \end{subfigure}
+The first generation of algorithms, developed by researchers including Hakimi, Mayeda
+and Seshu, Char, and Gabow and Myers, focused on producing every spanning tree exactly
+once without regard for ordering \cite{liu2026}. While correct, these approaches had a
+key limitation: consecutive trees in the output could differ by many edge changes
+simultaneously. In practice, this makes the listings difficult to use in applications
+such as network design, where a smooth, incremental transition between configurations
+is often required.
 
-    \vspace{0.5em}
+\subsection{Gray Codes and the Revolving-Door Problem}
 
-    % Row 2
-    \begin{subfigure}[b]{0.3\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{knuth_4.png}
-        \caption{}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.3\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{knuth_5.png}
-        \caption{}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.3\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{knuth_6.png}
-        \caption{}
-    \end{subfigure}
+A more structured approach emerged from the study of Gray codes: orderings of
+combinatorial objects where consecutive entries differ by a minimal, predictable change.
+Frank Gray introduced the binary reflected Gray code (BRGC) in 1953, which lists all
+$2^n$ binary strings of length $n$ so that each consecutive pair differs by exactly one
+bit. For $n = 3$, this gives: 000, 001, 011, 010, 110, 111, 101, 100. The spanning
+tree analog is an edge-exchange Gray code: a listing where each consecutive pair of
+trees differs by removing one edge and adding one edge \cite{liu2026}.
 
-    \caption{Knuth’s Algorithm S and spanning tree enumeration.}
-    \label{fig:knuth_algorithms}
-\end{figure}
+Knuth posed the existence of such a listing for complete graphs as an open problem in
+\textit{The Art of Computer Programming}, Volume 4 (Exercise 101, Section 7.2.1.6),
+rating it 46 out of 50 in difficulty, and noted that existing approaches such as
+Algorithm~S produce such listings but are ``quite complicated'' and lack a clean
+structure. Cummins (1966) proved edge-exchange Gray codes exist for any connected
+graph, with further proofs from Kamae, Kishi and Kajitani, and Holzmann and Harary.
+However, all of these were existence results; none provided a practical construction
+algorithm \cite{liu2026}.
+
+\subsection{Constructive Algorithms}
+
+Smith (1997) developed the first constructive algorithm for edge-exchange Gray codes
+on spanning trees, producing a valid listing in constant amortized time per tree. This
+means generating each new tree costs a fixed, bounded amount of work on average,
+regardless of graph size. More recently, Merino, Mutze, and Williams achieved
+$O(m \log n (\log \log n)^3)$ time per tree, later improved by Merino and Mutze to
+$O(m \log n)$. Despite these advances, Smith's algorithm remains the only one achieving
+constant amortized time \cite{liu2026}.
+
+\subsection{The Pivot Gray Code}
+
+Cameron, Grubb, and Sawada introduced a stricter variant: the pivot Gray code. Here,
+the removed and added edges must share a common vertex, called the pivot. Not every
+edge-exchange Gray code satisfies this; Smith's algorithm fails the pivot test for
+$K_5$, where several transitions involve edges with no shared vertex. Cameron et al.\
+developed a constant amortized time pivot Gray code algorithm for fan graphs, with
+extensions to wheel graphs. Behrooznia and Mutze later extended this to outerplanar
+graphs in $O(n \log n)$ time per tree. Both papers identified $K_n$ as the key
+remaining open problem \cite{liu2026}.
 
 \subsection{Algorithmic Challenges and Contributions}
 
-Designing efficient algorithms for generating spanning trees in Gray code order presents several challenges. First, the number of spanning trees grows exponentially as $n^{n-2}$, which can be lowered by using amortized time. Second, enforcing the Gray code property requires that consecutive spanning trees differ by only a small local modification, which is nontrivial to maintain while ensuring that all trees are generated exactly once. A third challenge arises in imposing stronger constraints of the pivot property, where the removed and added edges must share a common vertex.
+Designing efficient algorithms for generating spanning trees in Gray code order presents
+several challenges. First, the number of spanning trees grows exponentially as $n^{n-2}$,
+making brute force enumeration infeasible for large graphs. Second, enforcing the Gray
+code property requires that consecutive spanning trees differ by only a small local
+modification, which is nontrivial to maintain while ensuring that all trees are generated
+exactly once. A third challenge arises in imposing the stricter pivot property, where
+the removed and added edges must share a common vertex.
 
-From our research we found that these challenges are able to be solved by introducing a novel recursive framework that encodes spanning trees as tuples derived from rooted tree representations. The key idea is to reduce the problem of generating spanning trees to generating Gray codes over structured strings. For complete graphs, this is achieved using $k$-ary Gray codes, while for general graphs, the approach is extended using mixed-radix Gray codes to account for varying adjacency constraints. By mapping changes in these strings to modifications in the corresponding spanning trees, the algorithm ensures that each step corresponds to a valid pivot operation.
+Liu, Wong, Lam, and Im \cite{liu2026} resolve Knuth's open problem with the first known
+pivot Gray code for spanning trees of any complete graph $K_n$. Their algorithm, GenS,
+introduces a novel recursive framework that encodes spanning trees as tuples derived from
+rooted tree representations, reducing the problem of generating spanning trees to
+generating Gray codes over structured strings. For complete graphs, this is achieved
+using $k$-ary Gray codes; for general graphs, the approach is extended using mixed-radix
+Gray codes to account for varying adjacency constraints. By mapping changes in these
+strings to modifications in the corresponding spanning trees, the algorithm ensures that
+each step corresponds to a valid pivot operation.
 
-The resulting algorithm generates all spanning trees of $K_n$ in pivot Gray code order using constant amortized time per tree and $O(n^2)$ space. Moreover, the framework generalizes to arbitrary connected graphs, producing edge-exchange Gray codes in $O(n^2)$ time. Beyond improving structural simplicity over prior approaches such as Algorithm S, this method also provides proof of Cayley’s formula derived directly from the recursive generation process.
+GenS generates all $n^{n-2}$ spanning trees of $K_n$ in pivot Gray code order in
+constant amortized time per tree using $O(n^2)$ space, matching the efficiency of
+Smith's algorithm while satisfying the stricter pivot condition. Two key ideas make this
+possible: first, Lemma 2.2 proves that every single-digit string change corresponds to
+exactly one of four pivot change types on the tree, guaranteeing the pivot property is
+preserved throughout the listing. Second, the reflectable languages framework used by
+the GenK subroutine enables constant amortized time string generation. As a further
+result, the paper derives a new combinatorial proof of Cayley's formula directly from
+GenS's recursive structure, and extends the approach to edge-exchange Gray codes for
+arbitrary connected graphs \cite{liu2026}.
 
 \section{One Algorithm}
 \label{others}
@@ -289,9 +327,9 @@ run time is O(n2).
 
 \subsection{Source and Setup}
 
-The code implementation used in this project was provided from the research paper in python, though the indentation of the code was nonexistent and needed to be fixed. The research paper provided 3 code snippets in python. The first being code to generate pivot Gray codes for spanning trees of complete graphs. The second is to generate an edge-exchange Gray code for spanning trees of a general graph. The third is k\_ary and generates Gray codes for $k$-ary strings and mixed-radix strings. The other two programs utilize k\_ary to enumerate all spanning trees of the user-defined graph and print them out as a parent-pointer list.
+The code implementation used in this project was provided from the research paper in python, although the indentation of the code was not visible and needed to be fixed. The research paper provided 3 code snippets in python. The first being code to generate pivot Gray codes for spanning trees of complete graphs. The second is to generate an edge-exchange Gray code for spanning trees of a general graph. The third is \texttt{k\_ary} that generates Gray codes for $k$-ary strings and mixed-radix strings. The other two programs utilize \texttt{k\_ary} to enumerate all spanning trees of the user-defined graph and print them out as a parent-pointer list \cite{liu2026}.
 
-The program prompts the user to choose between five different graph types: complete graphs, fan graphs, wheel graphs, the Petersen graph, and custom graphs given by an edge list. For the first three choices, you are prompted for the number of vertices within the graphs. After input, the graph is constructed as an adjacency matrix, the program builds an initial spanning tree using breadth-first search, then begins enumeration. Each spanning tree is outputted in the form of 1->-1; 2->1, 3->2; ..., where every entry gives a vertex and the index of its parent, -1 representing the root. 
+The program prompts the user to choose between five different graph types: complete graphs, fan graphs, wheel graphs, the Petersen graph, and custom graphs given by an edge list. The fan, wheel, and Petersen graphs are just different types of general graphs. For complete, fan, and wheel graphs, the user is prompted for the number of vertices within the graph. After input, the graph is constructed as an adjacency matrix, the program builds an initial spanning tree using breadth-first search, and then begins enumeration. Each spanning tree is outputted in the form of \texttt{1->-1; 2->1, 3->2; ...}, where every entry gives a vertex and the index of its parent, -1 representing the root \cite{liu2026}.
 
 The programs only depend on Python's standard library and NumPy, which is utilized to build the adjacency matrix. No other packages are required, which keeps the setup rather minimalist and easy to implement in any Python standard environment. 
 
@@ -299,41 +337,43 @@ The programs only depend on Python's standard library and NumPy, which is utiliz
 
 Testing is focused on two questions: is the correct number of spanning trees produced? Does the Gray code property hold across the output sequence? 
 
-Correctness in regard to the count of spanning trees produced was verified using Cayley's formula that was previously mentioned, which states that a complete graph that has n vertices yields $n^{n-2}$ spanning trees. For n = 4 the expected count to see is 16, and for n = 5 it is 125. The counts with these corresponding n values, for a complete graph, are produced with the algorithm. 
+Correctness in regard to the count of spanning trees produced was verified using Cayley's formula that was previously mentioned, which states that a complete graph that has n vertices yields $n^{n-2}$ spanning trees. For n = 4 the expected count to see is 16, and for n = 5 it is 125. The counts with these corresponding n values, for a complete graph, are produced with the algorithm \cite{liu2026}. 
 
-The Gray code property was verified by inspecting the output, by comparing consecutive lines. For each pair of consecutive trees, the parent-pointer strings were compared entry by entry. In each of the cases, exactly one or two entries differed between two consecutive trees. This is consistent with the pivot operation that was described earlier. In which one edge is removed and another is added, sharing a common vertex. In the program output, each spanning tree appeared only once. This confirms that the enumeration visits each spanning tree exactly once. 
+The Gray code property was verified by inspecting the output, by comparing consecutive lines. For each pair of consecutive trees, the parent-pointer strings were compared entry by entry. In each of the cases, exactly one or two entries differed between two consecutive trees. This is consistent with the pivot operation that was described earlier. In which one edge is removed and another is added, sharing a common vertex. In the program output, each spanning tree appeared only once. This confirms that the enumeration visits each spanning tree exactly once \cite{liu2026}. 
 
 \subsection {Recommendations for Readers}
 
 The following notes are intended for readers who wish to run or build on this implementation. 
 
 \begin{itemize}
-    \item Python 3.8 or earlier versions is required. The implementation utilizes \texttt{yield from} for recursive generator delegation. Which, is not available for earlier versions of Python.
-    \item NumPy is necessary to be installed for all graphs except complete ones. It is used to build the adjacency matrix for the graphs that need it. 
-    \item Spanning tree counts grow rather rapidly as the number of vertices increases; this is more apparent for complete graphs. Cayley's formula gives a count of $n^{n-2}$ spanning trees, for complete graphs, which reaches a count over one million at n = 8 and over one billion at n = 11. (NEED TO CONTINUE HERE I AM TOO TIRED)
+    \item Python 3.8 or later versions are required. The implementation utilizes \texttt{yield from} for recursive generator delegation. This is not available for earlier versions of Python.
+    \item NumPy is necessary to be installed for all graphs, except complete ones. It is used to build the adjacency matrix for the graphs that need it. 
+    \item Spanning tree counts grow rather rapidly as the number of vertices increases; this is more apparent for complete graphs. Cayley's formula gives a count of $n^{n-2}$ spanning trees, for complete graphs, which reaches a count of over a million at n = 9 and over one a billion at n = 11. Due to how large these numbers can be for such little n, it is suggested to test with smaller n values, as for larger n the printing process becomes time-consuming.
+    \item For large graphs, the recursion depth can be quite substantial. When the recursion depth is too great, Python will raise the error \texttt{RecursionError}. If prompted with this error, one could raise the default recursion limit with \texttt{import sys; sys.setrecursionlimit(t)}, replacing \texttt{t} with any desired limit.
+    \item In regard to custom graphs they must be input as a semicolon-separated list of edges and in the form of \texttt{1,2; 2,3; 3,4; 4,1}. The graph must be fully connected; if the graph is not, the BFS will fail and cause an infinite recursion loop, which in turn raises \texttt{RecursionError} due to the recursion depth.  
 \end{itemize}
 
 
 \section{Conclusion}
+This report examined the work of Liu, Wong, Lam, and Im, which resolves a decades-long open problem by presenting the first known pivot Gray code for spanning trees of complete graphs. Their algorithm, GenS, encodes spanning trees as tuples of digit strings and guarantees the pivot property through four proven transition cases, achieving constant amortized time per tree using O(n²) space. Testing confirmed that the implementation produces correct tree counts matching Cayley's formula and valid pivot transitions throughout. The framework further generalizes to edge-exchange Gray codes for arbitrary connected graphs, extending the practical reach of the approach across applications in network design, epidemiology, and circuit analysis.
 
 
-
-\section{References}
+\section{References \#FIXME:DELETE LATER}
 
 
 Cite all resources used for preparing the project report (including books, papers, urls, and Artificial Intelligence). Add reference for every claim that is not substantiated within the project report. Add references and pointers to related topics that you find interesting but go beyond the scope of the project. Text or code taken from any source must be clearly indicated with quotation marks, with a clear reference to the source.
-
+\newpage
 \bibliography{paper}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\newpage
 \appendix
 
 \section{Credits}
 
 
-All members participated in team meetings, research, and presentation preparation. Individual writing contributions are as follows: Zachary wrote sections 1 and 3 which include the Problem and Motivation section, including the formal problem definition, Knuth's open problem background, and real-world applications of spanning tree enumeration. Richard wrote the History section, covering the development of spanning tree enumeration from early algorithms through Gray codes, the revolving-door problem, the progression to pivot Gray codes leading to this paper's contribution and compiled all references and credits. Behrouz wrote the One Algorithm section, providing a detailed explanation of the GenS algorithm including the tuple encoding, the four pivot-change cases from Lemma 2.2, pseudocode walkthrough, and running time analysis. Marcus wrote the Implementation section, including testing of the provided Python code, verification of tree counts against Cayley's formula, reader recommendations for using the code.
+All members participated in team meetings, research, and presentation preparation. Individual writing contributions are as follows: Zachary wrote sections 1 and 2 which include the Problem and Motivation section, including the formal problem definition, Knuth's open problem background, and real-world applications of spanning tree enumeration. Richard wrote the History section, covering the development of spanning tree enumeration from early algorithms through Gray codes, the revolving-door problem, the progression to pivot Gray codes leading to this paper's contribution and compiled all references and credits. Behrouz wrote the One Algorithm section, providing a detailed explanation of the GenS algorithm including the tuple encoding, the four pivot-change cases from Lemma 2.2, pseudocode walkthrough, and running time analysis. Marcus wrote the Implementation section, including testing of the provided Python code, verification of tree counts against Cayley's formula, reader recommendations for using the code.
 
 
 \end{document}
